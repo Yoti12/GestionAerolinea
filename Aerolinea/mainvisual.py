@@ -6,11 +6,10 @@ from Maleta import Maleta
 from Avion import Avion
 from Clase import Clase
 
-# Creamos el avión
-avion = Avion("Boeing 737", 8, 12)  # 8 asientos business, 12 turista
+# Creación del avión
+avion = Avion("Boeing 737", 8, 12)  
 
 def reservar_asiento():
-    try:
         # Leer los valores del formulario
         nombre = entry_nombre.get()
         pasaporte = entry_pasaporte.get()
@@ -33,19 +32,17 @@ def reservar_asiento():
         asiento = avion.reservar_asiento(fila, butaca, clase, pasajero)
 
         if asiento:
-            messagebox.showinfo("Éxito", f"Asiento reservado: {asiento}")
+            messagebox.showinfo(f"Éxito Asiento reservado: {asiento}")
         else:
             messagebox.showwarning("Ocupado", "Ese asiento ya está ocupado.")
 
-    except Exception as e:
-        messagebox.showerror("Error", str(e))
 
 
-# Crear la ventana
+
 root = tk.Tk()
 root.title("Reserva de Asientos")
 
-# Datos del pasajero
+
 tk.Label(root, text="Nombre:").grid(row=0, column=0)
 entry_nombre = tk.Entry(root)
 entry_nombre.grid(row=0, column=1)
