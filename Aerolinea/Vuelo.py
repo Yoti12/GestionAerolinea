@@ -1,42 +1,20 @@
-# #1 public class Vuelo {
-#     private String paisOrigen;
-#     private String paisDestino;
-#     private String fecha;
-#     private Avion avion;
-from Avion import Avion
+from Avion import Avion  # Se importa la clase Avion desde el archivo Avion.py para ser utilizada en esta clase.
 
-class Vuelo:
-    def __init__(self, paisOrigen, paisDestino, fecha, avion):
-        self.paisOrigen = paisOrigen
-        self.paisDestino = paisDestino
-        self.fecha = fecha
-        self.avion = avion
+class Vuelo:  # Se define la clase Vuelo que representa un vuelo con origen, destino, fecha y un avión asignado.
+    def __init__(self, paisOrigen, paisDestino, fecha, avion):  # Constructor que inicializa los atributos del vuelo.
+        self.paisOrigen = paisOrigen  # Asigna el país de origen del vuelo.
+        self.paisDestino = paisDestino  # Asigna el país de destino del vuelo.
+        self.fecha = fecha  # Asigna la fecha del vuelo.
+        self.avion = avion  # Asigna el objeto Avion al vuelo.
+        
+    def getPaisOrigen(self):  # Método para obtener el país de origen del vuelo.
+        return self.paisOrigen  # Retorna el país de origen.
 
-#     public Vuelo(String paisOrigen, String paisDestino, String fecha, Avion avion) {
-#         this.paisOrigen = paisOrigen;
-#         this.paisDestino = paisDestino;
-#         this.fecha = fecha;
-#         this.avion = avion;
-#     }
+    def getPaisDestino(self):  # Método para obtener el país de destino del vuelo.
+        return self.paisDestino  # Retorna el país de destino.
 
-#     public String getPaisOrigen() {
-#         return this.paisOrigen;
-#     }
-    def getPaisOrigen (self):
-        return self.paisOrigen
-#     public String getPaisDestino() {
-#         return this.paisDestino;
-#     }
-    def getPaisDestino (self):
-        return self.paisDestino
-#     public String getFecha() {
-#         return this.fecha;
-#     }
-    def getFecha(self):
-        return self.fecha
-#     public Avion getAvion() {
-#         return this.avion;
-#     }
-    def getAvion (self):
-        return self.avion
-# }
+    def getFecha(self):  # Método para obtener la fecha del vuelo.
+        return self.fecha  # Retorna la fecha.
+
+    def getAvion(self):  # Método para obtener el avión asignado al vuelo.
+        return self.avion  # Retorna el objeto Avion.
