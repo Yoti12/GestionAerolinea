@@ -91,7 +91,8 @@ class Avion:  # Se define la clase Avion, que representa un avión con asientos 
                 if asiento:
                     resultado += str(asiento.pasajero) + "\n"  # Añade la representación del pasajero.
 
-        return resultado  # Retorna la lista completa.
+            return resultado  # Retorna la lista completa.
+
 
     def listar_menores_de_edad(self):  # Método para listar los pasajeros menores de 15 años.
         resultado = "\n--- Pasajeros menores de 15 años ---\n"

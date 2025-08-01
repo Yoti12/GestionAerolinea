@@ -1,90 +1,94 @@
-import tkinter as tk  # Se importa el módulo tkinter para crear interfaces gráficas.
-from tkinter import messagebox  # Se importa messagebox para mostrar cuadros de diálogo.
-from Reserva import reservar_asiento  # Se importa la función reservar_asiento desde el módulo Reserva.
+import tkinter as tk
+from tkinter import messagebox
+from Reserva import reservar_asiento
+from Clase import Clase
 
-class InterfazReserva:  # Se define la clase InterfazReserva que gestiona la interfaz de reservas.
-    def __init__(self, root, avion):  # Constructor que recibe la ventana principal y un objeto Avion.
-        self.root = root  # Se guarda la ventana raíz.
-        self.avion = avion  # Se guarda el objeto avión.
-        self.root.title("Reserva de Asientos")  # Se establece el título de la ventana.
+class InterfazReserva:
+    def __init__(self, root, avion):
+        self.root = root
+        self.avion = avion
+        self.root.title("Sistema de Aerolínea")
 
-        self.campos = {}  # Diccionario para almacenar las entradas del formulario.
+        self.frame_menu = tk.Frame(root, width=220, bg="#05194C")
+        self.frame_menu.pack(side=tk.LEFT, fill=tk.Y)
 
-        labels = [  # Lista con las etiquetas de los campos del formulario.
-            "Nombre", "Pasaporte", "Teléfono", "Edad",
-            "Peso (kg)", "Largo", "Ancho", "Alto",
-            "Fila", "Butaca (1-4)"
+        self.frame_contenido = tk.Frame(root, bg="#F2F2F2")
+        self.frame_contenido.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        botones = [
+            ("Reservar Asiento", self.mostrar_formulario_reserva),
+            ("Ver Mapa de Asientos", self.mostrar_mapa_asientos),
+            ("Listar Pasajeros", self.mostrar_pasajeros),
+            ("Pasajeros Menores", self.mostrar_menores),
+            ("Calcular Ingresos", self.mostrar_ingresos),
         ]
 
-        # Se crean etiquetas y campos de texto para cada campo del formulario.
-        for i, label in enumerate(labels):
-            tk.Label(root, text=label + ":").grid(row=i, column=0)  # Crea la etiqueta y la ubica.
-            entry = tk.Entry(root)  # Crea un campo de entrada.
-            entry.grid(row=i, column=1)  # Ubica el campo en la cuadrícula.
-            self.campos[label.lower().split()[0]] = entry  # Guarda el campo en el diccionario (clave en minúscula).
+        for texto, comando in botones:
+            tk.Button(self.frame_menu, text=texto, width=20, command=comando,
+                      bg="#C60C30", fg="white", activebackground="#A50A26", bd=0,
+                      font=("Helvetica", 10, "bold")).pack(pady=10)
 
-        tk.Label(root, text="Clase:").grid(row=10, column=0)  # Etiqueta para la selección de clase.
-        self.clase_var = tk.StringVar(value="turista")  # Variable para guardar la clase seleccionada (por defecto: turista).
-        tk.Radiobutton(root, text="Turista", variable=self.clase_var, value="turista").grid(row=10, column=1)  # Botón para clase turista.
-        tk.Radiobutton(root, text="Business", variable=self.clase_var, value="business").grid(row=10, column=2)  # Botón para clase business.
+        self.campos = {}
 
-        # Botones de acciones con sus respectivos comandos.
-        tk.Button(root, text="Reservar asiento", command=self.on_reservar).grid(row=11, column=1, pady=10)
-        tk.Button(root, text="Ver Mapa de Asientos", command=self.mostrar_mapa_asientos).grid(row=12, column=1, pady=5)
-        tk.Button(root, text="Listar Pasajeros", command=self.mostrar_pasajeros).grid(row=13, column=1, pady=5)
-        tk.Button(root, text="Pasajeros Menores de Edad", command=self.mostrar_menores).grid(row=14, column=1, pady=5)
-        tk.Button(root, text="Calcular Ingresos", command=self.mostrar_ingresos).grid(row=15, column=1, pady=5)
+    def limpiar_contenido(self):
+        for widget in self.frame_contenido.winfo_children():
+            widget.destroy()
 
-    def on_reservar(self):  # Método que se ejecuta cuando se presiona el botón "Reservar asiento".
-        datos = {  # Se recogen todos los datos desde los campos del formulario.
-            "nombre": self.campos["nombre"].get(),
-            "pasaporte": self.campos["pasaporte"].get(),
-            "telefono": self.campos["teléfono"].get(),
-            "edad": self.campos["edad"].get(),
-            "peso": self.campos["peso"].get(),
-            "largo": self.campos["largo"].get(),
-            "ancho": self.campos["ancho"].get(),
-            "alto": self.campos["alto"].get(),
-            "fila": self.campos["fila"].get(),
-            "butaca": self.campos["butaca"].get(),
-            "clase": self.clase_var.get()
-        }
+    def mostrar_formulario_reserva(self):
+        self.limpiar_contenido()
 
-        reservar_asiento(self.avion, datos)  # Se llama a la función para intentar reservar el asiento.
+        campos = [
+            ("Nombre", "nombre"),
+            ("Pasaporte", "pasaporte"),
+            ("Teléfono", "telefono"),
+            ("Edad", "edad"),
+            ("Peso (kg)", "peso"),
+            ("Largo", "largo"),
+            ("Ancho", "ancho"),
+            ("Alto", "alto"),
+            ("Fila", "fila"),
+            ("Butaca", "butaca"),
+        ]
 
-    def mostrar_mapa_asientos(self):  # Método que muestra el mapa de asientos del avión.
-        mapa = self.avion.obtener_mapa_asientos()  # Obtiene el mapa de asientos.
+        self.campos = {}
+        for i, (label_texto, campo) in enumerate(campos):
+            tk.Label(self.frame_contenido, text=label_texto, bg="#F2F2F2", font=("Arial", 10)).grid(row=i, column=0, padx=10, pady=5, sticky="e")
+            entrada = tk.Entry(self.frame_contenido)
+            entrada.grid(row=i, column=1, padx=10, pady=5)
+            self.campos[campo] = entrada
 
-        ventana = tk.Toplevel(self.root)  # Crea una nueva ventana secundaria.
-        ventana.title("Mapa de Asientos")  # Título de la ventana.
+        tk.Label(self.frame_contenido, text="Clase", bg="#F2F2F2", font=("Arial", 10)).grid(row=len(campos), column=0, padx=10, pady=5, sticky="e")
+        opcion_clase = tk.StringVar()
+        opcion_clase.set("turista")
+        tk.OptionMenu(self.frame_contenido, opcion_clase, "turista", "business").grid(row=len(campos), column=1, padx=10, pady=5)
+        self.campos["clase"] = opcion_clase
 
-        text_widget = tk.Text(ventana, width=60, height=20)  # Se crea un widget de texto para mostrar el mapa.
-        text_widget.insert(tk.END, mapa)  # Se inserta el contenido del mapa.
-        text_widget.config(state=tk.DISABLED)  # Se desactiva la edición del texto.
-        text_widget.pack(padx=10, pady=10)  # Se muestra el widget con padding.
+        tk.Button(self.frame_contenido, text="Reservar", bg="#C60C30", fg="white", font=("Arial", 10, "bold"),
+                  command=lambda: self.reservar()).grid(row=len(campos)+1, column=0, columnspan=2, pady=15)
 
-    def mostrar_pasajeros(self):  # Método que muestra la lista de todos los pasajeros por clase.
-        lista = self.avion.listar_pasajeros_por_clase()  # Se obtiene la lista desde el avión.
+    def reservar(self):
+        entradas = {k: v.get() if not isinstance(v, tk.StringVar) else v.get() for k, v in self.campos.items()}
+        reservar_asiento(self.avion, entradas)
 
-        ventana = tk.Toplevel(self.root)  # Nueva ventana para mostrar la lista.
-        ventana.title("Pasajeros por Vuelo")
+    def mostrar_mapa_asientos(self):
+        self.limpiar_contenido()
+        mapa = self.avion.obtener_mapa_asientos()
+        tk.Label(self.frame_contenido, text=mapa, font=("Courier", 10), bg="#F2F2F2", justify="left").pack(padx=10, pady=10)
 
-        texto = tk.Text(ventana, width=60, height=20)
-        texto.insert(tk.END, lista)
-        texto.config(state=tk.DISABLED)
-        texto.pack(padx=10, pady=10)
+    def mostrar_pasajeros(self):
+        self.limpiar_contenido()
+        pasajeros = self.avion.listar_pasajeros_por_clase()
+        texto = "\n".join(str(p) for p in pasajeros) if pasajeros else "No hay pasajeros registrados."
+        tk.Label(self.frame_contenido, text=texto, bg="#F2F2F2", justify="left", anchor="nw", font=("Arial", 10)).pack(padx=10, pady=10, fill="both", expand=True)
 
-    def mostrar_menores(self):  # Método que muestra los pasajeros menores de 15 años.
-        menores = self.avion.listar_menores_de_edad()  # Se obtiene la lista de menores.
+    def mostrar_menores(self):
+        self.limpiar_contenido()
+        menores = self.avion.listar_menores_de_edad()
+        texto = "\n".join(str(p) for p in menores) if menores else "No hay pasajeros menores de edad."
+        tk.Label(self.frame_contenido, text=texto, bg="#F2F2F2", justify="left", anchor="nw", font=("Arial", 10)).pack(padx=10, pady=10, fill="both", expand=True)
 
-        ventana = tk.Toplevel(self.root)
-        ventana.title("Pasajeros Menores de Edad")
-
-        texto = tk.Text(ventana, width=60, height=20)
-        texto.insert(tk.END, menores)
-        texto.config(state=tk.DISABLED)
-        texto.pack(padx=10, pady=10)
-
-    def mostrar_ingresos(self):  # Método que muestra los ingresos del vuelo.
-        mensaje = self.avion.calcular_ingresos_por_vuelo()  # Se calcula el ingreso total.
-        messagebox.showinfo("Ingresos", mensaje)  # Se muestra el resultado en un cuadro de diálogo.
+    def mostrar_ingresos(self):
+        self.limpiar_contenido()
+        total = self.avion.calcular_ingresos_por_vuelo()
+        tk.Label(self.frame_contenido, text=f"Ingresos Totales: ${total}", font=("Arial", 12, "bold"),
+                 bg="#F2F2F2", fg="#05194C").pack(pady=20)

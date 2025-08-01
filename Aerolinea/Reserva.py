@@ -16,9 +16,24 @@ def reservar_asiento(avion, entradas):  # Se define la función reservar_asiento
     butaca = int(entradas['butaca'])  # Se convierte y obtiene la butaca del asiento desde las entradas.
     clase = Clase.BUSINESS if entradas['clase'] == "business" else Clase.TURISTA  
     # Se determina la clase del asiento (BUSINESS o TURISTA) según el valor en las entradas.
+    # Recorremos todos los asientos para verificar duplicados
+    # Verificar duplicados en todos los asientos (Business y Turista)
+    for fila_asientos in avion.asiento_business + avion.asiento_turista:
+        for asiento in fila_asientos:
+            if asiento:
+                p = asiento.pasajero
+                if p.nombre == nombre:
+                    messagebox.showerror("Error", f"Ya existe un pasajero con el nombre: {nombre}")
+                    return
+                if p.pasaporte == pasaporte:
+                    messagebox.showerror("Error", f"Ya existe un pasajero con el pasaporte: {pasaporte}")
+                    return
+
+
 
     maleta = Maleta(peso, largo, alto, ancho)  # Se crea un objeto Maleta con los datos ingresados.
     pasajero = Pasajero(nombre, pasaporte, telefono, edad, maleta)  # Se crea un objeto Pasajero con sus datos personales y su maleta.
+
 
     asiento = avion.reservar_asiento(fila, butaca, clase, pasajero)  
     # Se intenta reservar un asiento en el avión con la fila, butaca, clase y pasajero especificados.
