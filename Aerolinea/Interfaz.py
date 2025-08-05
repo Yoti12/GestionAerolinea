@@ -9,10 +9,17 @@ class InterfazReserva:
         self.avion = avion
         self.root.title("Sistema de Aerolínea")
 
+        # Estilos unificados
+        self.fuente_contenido = ("Arial", 12, "bold")
+        self.color_texto = "#05194C"
+        self.bg_contenido = "#F2F2F2"
+
+        # Menú lateral
         self.frame_menu = tk.Frame(root, width=220, bg="#05194C")
         self.frame_menu.pack(side=tk.LEFT, fill=tk.Y)
 
-        self.frame_contenido = tk.Frame(root, bg="#F2F2F2")
+        # Área de contenido
+        self.frame_contenido = tk.Frame(root, bg=self.bg_contenido)
         self.frame_contenido.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         botones = [
@@ -52,43 +59,67 @@ class InterfazReserva:
 
         self.campos = {}
         for i, (label_texto, campo) in enumerate(campos):
-            tk.Label(self.frame_contenido, text=label_texto, bg="#F2F2F2", font=("Arial", 10)).grid(row=i, column=0, padx=10, pady=5, sticky="e")
-            entrada = tk.Entry(self.frame_contenido)
+            tk.Label(self.frame_contenido, text=label_texto,
+                     bg=self.bg_contenido, fg=self.color_texto,
+                     font=self.fuente_contenido).grid(row=i, column=0, padx=10, pady=5, sticky="e")
+            entrada = tk.Entry(self.frame_contenido, font=self.fuente_contenido)
             entrada.grid(row=i, column=1, padx=10, pady=5)
             self.campos[campo] = entrada
 
-        tk.Label(self.frame_contenido, text="Clase", bg="#F2F2F2", font=("Arial", 10)).grid(row=len(campos), column=0, padx=10, pady=5, sticky="e")
+        # Opción de clase
+        tk.Label(self.frame_contenido, text="Clase",
+                 bg=self.bg_contenido, fg=self.color_texto,
+                 font=self.fuente_contenido).grid(row=len(campos), column=0, padx=10, pady=5, sticky="e")
         opcion_clase = tk.StringVar()
         opcion_clase.set("turista")
-        tk.OptionMenu(self.frame_contenido, opcion_clase, "turista", "business").grid(row=len(campos), column=1, padx=10, pady=5)
+        tk.OptionMenu(self.frame_contenido, opcion_clase, "turista", "business")\
+            .config(font=self.fuente_contenido)
+        tk.OptionMenu(self.frame_contenido, opcion_clase, "turista", "business")\
+            .grid(row=len(campos), column=1, padx=10, pady=5)
         self.campos["clase"] = opcion_clase
 
-        tk.Button(self.frame_contenido, text="Reservar", bg="#C60C30", fg="white", font=("Arial", 10, "bold"),
-                  command=lambda: self.reservar()).grid(row=len(campos)+1, column=0, columnspan=2, pady=15)
+        tk.Button(self.frame_contenido, text="Reservar",
+                  bg="#C60C30", fg="white", font=self.fuente_contenido,
+                  command=lambda: self.reservar()).grid(
+            row=len(campos)+1, column=0, columnspan=2, pady=15)
 
     def reservar(self):
-        entradas = {k: v.get() if not isinstance(v, tk.StringVar) else v.get() for k, v in self.campos.items()}
+        entradas = {
+            k: (v.get() if not isinstance(v, tk.StringVar) else v.get())
+            for k, v in self.campos.items()
+        }
         reservar_asiento(self.avion, entradas)
 
     def mostrar_mapa_asientos(self):
         self.limpiar_contenido()
         mapa = self.avion.obtener_mapa_asientos()
-        tk.Label(self.frame_contenido, text=mapa, font=("Courier", 10), bg="#F2F2F2", justify="left").pack(padx=10, pady=10)
+        tk.Label(self.frame_contenido, text=mapa,
+                 font=self.fuente_contenido, bg=self.bg_contenido,
+                 fg=self.color_texto, justify="left", anchor="nw")\
+            .pack(padx=10, pady=10, fill="both", expand=True)
 
     def mostrar_pasajeros(self):
         self.limpiar_contenido()
         pasajeros = self.avion.listar_pasajeros_por_clase()
-        texto = "\n".join(str(p) for p in pasajeros) if pasajeros else "No hay pasajeros registrados."
-        tk.Label(self.frame_contenido, text=texto, bg="#F2F2F2", justify="left", anchor="nw", font=("Arial", 10)).pack(padx=10, pady=10, fill="both", expand=True)
+        texto = pasajeros if pasajeros else "No hay pasajeros registrados."
+        tk.Label(self.frame_contenido, text=texto,
+                 font=self.fuente_contenido, bg=self.bg_contenido,
+                 fg=self.color_texto, justify="left", anchor="nw")\
+            .pack(padx=10, pady=10, fill="both", expand=True)
 
     def mostrar_menores(self):
         self.limpiar_contenido()
         menores = self.avion.listar_menores_de_edad()
-        texto = "\n".join(str(p) for p in menores) if menores else "No hay pasajeros menores de edad."
-        tk.Label(self.frame_contenido, text=texto, bg="#F2F2F2", justify="left", anchor="nw", font=("Arial", 10)).pack(padx=10, pady=10, fill="both", expand=True)
+        texto = menores if menores else "No hay pasajeros menores de edad."
+        tk.Label(self.frame_contenido, text=texto,
+                 font=self.fuente_contenido, bg=self.bg_contenido,
+                 fg=self.color_texto, justify="left", anchor="nw")\
+            .pack(padx=10, pady=10, fill="both", expand=True)
 
     def mostrar_ingresos(self):
         self.limpiar_contenido()
         total = self.avion.calcular_ingresos_por_vuelo()
-        tk.Label(self.frame_contenido, text=f"Ingresos Totales: ${total}", font=("Arial", 12, "bold"),
-                 bg="#F2F2F2", fg="#05194C").pack(pady=20)
+        tk.Label(self.frame_contenido, text=total,
+                 font=self.fuente_contenido, bg=self.bg_contenido,
+                 fg=self.color_texto, justify="left", anchor="nw")\
+            .pack(pady=20, padx=10)
