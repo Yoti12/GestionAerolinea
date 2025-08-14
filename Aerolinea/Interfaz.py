@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from Reserva import reservar_asiento
 from Clase import Clase
+from Reporte import generar_reporte_pasajeros
 
 class InterfazReserva:
     def __init__(self, root, avion):
@@ -28,6 +29,7 @@ class InterfazReserva:
             ("Listar Pasajeros", self.mostrar_pasajeros),
             ("Pasajeros Menores", self.mostrar_menores),
             ("Calcular Ingresos", self.mostrar_ingresos),
+            ("Exportar PDF", self.exportar_pdf),
         ]
 
         for texto, comando in botones:
@@ -123,3 +125,27 @@ class InterfazReserva:
                  font=self.fuente_contenido, bg=self.bg_contenido,
                  fg=self.color_texto, justify="left", anchor="nw")\
             .pack(pady=20, padx=10)
+    
+    def exportar_pdf(self):
+        try:
+            pasajeros = []
+            # Recorremos clase Business
+            for fila in self.avion.asiento_business:
+                for asiento in fila:
+                    if asiento:
+                        pasajeros.append((asiento.pasajero.nombre, "Business", f"{asiento.fila}-{asiento.butaca}"))
+            # Recorremos clase Turista
+            for fila in self.avion.asiento_turista:
+                for asiento in fila:
+                    if asiento:
+                        pasajeros.append((asiento.pasajero.nombre, "Turista", f"{asiento.fila}-{asiento.butaca}"))
+
+            if not pasajeros:
+                messagebox.showinfo("Exportar PDF", "No hay pasajeros registrados para exportar.")
+                return
+
+            generar_reporte_pasajeros(pasajeros, "reporte_pasajeros.pdf")
+            messagebox.showinfo("Exportar PDF", "Reporte PDF generado correctamente.")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo generar el PDF: {e}")
